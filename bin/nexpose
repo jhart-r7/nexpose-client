@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
+
+require 'bundler/setup'
+require 'nexpose/cli/cli'
+
+begin
+  Nexpose::CLI.start(ARGV)
+rescue Interrupt
+  puts 'Quitting...'
+end

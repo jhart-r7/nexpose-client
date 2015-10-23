@@ -7,17 +7,13 @@ module Nexpose
   class SiteCLI < Thor
 
     desc 'add', 'Add a site'
-    option :name
-    option :template
+    option :name, aliases: '-v', desc: 'Name of the site', default: 'Randomly generated'
+    option :template, aliases: '-t', desc: 'Scan template to use', default: 'full-audit-without-web-spider'
     def add(*assets)
       assets = $stdin.readlines.map(&:strip) if assets.empty?
       name = options[:name] || SecureRandom.hex
       $connections.map do |connection|
-        if options[:template]
-          site = Site.new(name, options[:template])
-        else
-          site = Site.new(name)
-        end
+        site = Site.new(name, options[:template])
         assets.map do |asset|
           site.include_asset(asset)
         end
@@ -27,7 +23,7 @@ module Nexpose
     end
 
     desc 'delete', 'Delete sites'
-    option :all, aliases: :a, type: :boolean
+    option :all, aliases: '-a', type: :boolean, desc: 'Delete all sites', default: false
     def delete(*site_names)
       $connections.map do |connection|
         if options[:all]
@@ -57,8 +53,8 @@ module Nexpose
     end
 
     desc 'scan', 'Scan sites/assets'
-    option :wait, aliases: :w, type: :boolean
-    option :log, aliases: :l, type: :string, banner: '<log_path>', required: true
+    option :wait, aliases: '-w', type: :boolean
+    option :log, aliases: '-l', type: :string, banner: '<log_path>', required: true
     def scan(site_name, *assets)
       $connections.map do |connection|
         site = connection.sites.find { |s| s.name == site_name }

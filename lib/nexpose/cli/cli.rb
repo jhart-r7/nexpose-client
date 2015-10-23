@@ -8,7 +8,7 @@ require_relative 'site'
 
 module Nexpose
   class CLI < Thor
-    class_option :verbose, aliases: :v, type: :boolean
+    class_option :verbose, aliases: :v, type: :boolean, desc: 'Be verbose', default: 'true'
     class_option 'configuration-path', aliases: :c, type: :string, default: ::File.join(::File.expand_path('~'), Nexpose::ConfigureCLI::CONFIG_FILENAME),
                  desc: 'Path to nexpose-client configuration file', banner: 'FILE'
 

@@ -27,7 +27,7 @@ module Nexpose
     end
 
     desc 'delete', 'Delete sites'
-    option :all, :aliases => :a, :type => :boolean
+    option :all, aliases: :a, type: :boolean
     def delete(*site_names)
       $connections.map do |connection|
         if options[:all]
@@ -37,7 +37,7 @@ module Nexpose
           end
         else
           site_names.each do |site_name|
-            site = connection.sites.select { |site| site.name == site_name }.first
+            site = connection.sites.find { |s| s.name == site_name }
             fail "No site named #{site_name} on #{connection}" unless site
             puts "Deleting #{site_name}/#{site.id} on #{connection.host}"
             connection.delete_site(site.id)
@@ -60,12 +60,12 @@ module Nexpose
     option :wait, aliases: :w, type: :boolean
     def scan(site_name, *assets)
       $connections.map do |connection|
-        site = connection.sites.select { |site| site.name == site_name }.first
+        site = connection.sites.find { |s| s.name == site_name }
         fail "No site named #{site_name} on #{connection}" unless site
         puts "Scanning #{site_name}/#{site.id} on #{connection.host}"
         scan = connection.scan_site(site.id)
         if options[:wait]
-          while true do
+          loop do
             status = connection.scan_status(scan.id)
             break if status == Nexpose::Scan::Status::FINISHED
             fail "Scan did not finish: #{status}" if [ Nexpose::Scan::Status::ABORTED, Nexpose::Scan::Status::ERROR, Nexpose::Scan::Status::PAUSED, Nexpose::Scan::Status::STOPPED ].include?(status)

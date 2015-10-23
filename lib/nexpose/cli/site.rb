@@ -10,6 +10,7 @@ module Nexpose
     option :name
     option :template
     def add(*assets)
+      assets = $stdin.readlines.map(&:strip) if assets.empty?
       name = options[:name] || SecureRandom.hex
       $connections.map do |connection|
         if options[:template]
@@ -56,12 +57,20 @@ module Nexpose
     end
 
     desc 'scan', 'Scan sites/assets'
+    option :wait, aliases: :w, type: :boolean
     def scan(site_name, *assets)
       $connections.map do |connection|
         site = connection.sites.select { |site| site.name == site_name }.first
         fail "No site named #{site_name} on #{connection}" unless site
         puts "Scanning #{site_name}/#{site.id} on #{connection.host}"
-        connection.scan_site(site.id)
+        scan = connection.scan_site(site.id)
+        if options[:wait]
+          while true do
+            status = connection.scan_status(scan.id)
+            break if status == Nexpose::Scan::Status::FINISHED
+            fail "Scan did not finish: #{status}" if [ Nexpose::Scan::Status::ABORTED, Nexpose::Scan::Status::ERROR, Nexpose::Scan::Status::PAUSED, Nexpose::Scan::Status::STOPPED ].include?(status)
+          end
+        end
       end
     end
   end

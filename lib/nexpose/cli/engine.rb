@@ -4,7 +4,7 @@ require 'thor'
 
 module Nexpose
   class EngineCLI < Thor
-    
+
     desc 'list', 'List engines'
     def list
       $connections.map do |connection|

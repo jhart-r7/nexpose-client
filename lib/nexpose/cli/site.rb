@@ -8,10 +8,15 @@ module Nexpose
 
     desc 'add', 'Add a site'
     option :name
+    option :template
     def add(*assets)
       name = options[:name] || SecureRandom.hex
       $connections.map do |connection|
-        site = Site.new(name)
+        if options[:template]
+          site = Site.new(name, options[:template])
+        else
+          site = Site.new(name)
+        end
         assets.map do |asset|
           site.include_asset(asset)
         end
@@ -22,7 +27,6 @@ module Nexpose
 
     desc 'delete', 'Delete sites'
     option :all, :aliases => :a, :type => :boolean
-
     def delete(*site_names)
       $connections.map do |connection|
         if options[:all]

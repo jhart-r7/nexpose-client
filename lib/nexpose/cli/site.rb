@@ -4,75 +4,81 @@ require 'securerandom'
 require 'thor'
 
 module Nexpose
-  class SiteCLI < Thor
+  module CLI
+    class Site < Thor
 
-    desc 'add', 'Add a site'
-    option :name, aliases: '-v', desc: 'Name of the site', default: 'Randomly generated'
-    option :template, aliases: '-t', desc: 'Scan template to use', default: 'full-audit-without-web-spider'
-    def add(*assets)
-      assets = $stdin.readlines.map(&:strip) if assets.empty?
-      name = options[:name] || SecureRandom.hex
-      $connections.map do |connection|
-        site = Site.new(name, options[:template])
-        assets.map do |asset|
-          site.include_asset(asset)
-        end
-        site.save(connection)
-        puts "Created #{name} on #{connection.host}" if options[:verbose]
-      end
-    end
+      desc 'add', 'Add a site'
+      option :name, aliases: '-v', desc: 'Name of the site', default: 'Randomly generated'
+      option :template, aliases: '-t', desc: 'Scan template to use', default: 'full-audit-without-web-spider'
 
-    desc 'delete', 'Delete sites'
-    option :all, aliases: '-a', type: :boolean, desc: 'Delete all sites', default: false
-    def delete(*site_names)
-      $connections.map do |connection|
-        if options[:all]
-          connection.sites.map do |site_summary|
-            puts "Deleting #{site_summary.name}/#{site_summary.id} on #{connection.host}" if options[:verbose]
-            connection.delete_site(site_summary.id)
+      def add(*assets)
+        assets = $stdin.readlines.map(&:strip) if assets.empty?
+        name = options[:name] || SecureRandom.hex
+        $connections.map do |connection|
+          site = Site.new(name, options[:template])
+          assets.map do |asset|
+            site.include_asset(asset)
           end
-        else
-          site_names.each do |site_name|
-            site = connection.sites.find { |s| s.name == site_name }
-            fail "No site named #{site_name} on #{connection}" unless site
-            puts "Deleting #{site_name}/#{site.id} on #{connection.host}" if options[:verbose]
-            connection.delete_site(site.id)
-          end
+          site.save(connection)
+          puts "Created #{name} on #{connection.host}" if options[:verbose]
         end
       end
-    end
 
-    desc 'list', 'List sites'
-    def list
-      $connections.map do |connection|
-        puts "#{connection.host}:"
-        connection.sites.map do |site_summary|
-          puts "\t#{site_summary.name}"
-        end
-      end
-    end
+      desc 'delete', 'Delete sites'
+      option :all, aliases: '-a', type: :boolean, desc: 'Delete all sites', default: false
 
-    desc 'scan', 'Scan sites/assets'
-    option :wait, aliases: '-w', type: :boolean
-    option :log, aliases: '-l', type: :string, banner: '<log_path>', required: true
-    def scan(site_name, *assets)
-      $connections.map do |connection|
-        site = connection.sites.find { |s| s.name == site_name }
-        fail "No site named #{site_name} on #{connection}" unless site
-        puts "Scanning #{site_name}/#{site.id} on #{connection.host}" if options[:verbose]
-        scan = connection.scan_site(site.id)
-        if options[:wait]
-          loop do
-            status = connection.scan_status(scan.id)
-            if status == Nexpose::Scan::Status::FINISHED
-              if options[:log]
-                path = ::File.expand_path("#{options[:log]}-#{connection.host}")
-                connection.download("/data/scan/log?scan-id=#{scan.id}", path)
-                puts "Saved log for scan ID #{scan.id} of #{site_name} in #{path}" if options[:verbose]
-              end
-              break
+      def delete(*site_names)
+        $connections.map do |connection|
+          if options[:all]
+            connection.sites.map do |site_summary|
+              puts "Deleting #{site_summary.name}/#{site_summary.id} on #{connection.host}" if options[:verbose]
+              connection.delete_site(site_summary.id)
             end
-            fail "Scan did not finish: #{status}" if [ Nexpose::Scan::Status::ABORTED, Nexpose::Scan::Status::ERROR, Nexpose::Scan::Status::PAUSED, Nexpose::Scan::Status::STOPPED ].include?(status)
+          else
+            site_names.each do |site_name|
+              site = connection.sites.find { |s| s.name == site_name }
+              fail "No site named #{site_name} on #{connection}" unless site
+              puts "Deleting #{site_name}/#{site.id} on #{connection.host}" if options[:verbose]
+              connection.delete_site(site.id)
+            end
+          end
+        end
+      end
+
+      desc 'list', 'List sites'
+
+      def list
+        $connections.map do |connection|
+          puts "#{connection.host}:"
+          connection.sites.map do |site_summary|
+            puts "\t#{site_summary.name}"
+          end
+        end
+      end
+
+      desc 'scan', 'Scan sites/assets'
+      option :wait, aliases: '-w', type: :boolean
+      option :log, aliases: '-l', type: :string, banner: '<log_path>', required: true
+
+      def scan(site_name, *assets)
+        $connections.map do |connection|
+          site = connection.sites.find { |s| s.name == site_name }
+          fail "No site named #{site_name} on #{connection}" unless site
+          puts "Scanning #{site_name}/#{site.id} on #{connection.host}" if options[:verbose]
+          scan = connection.scan_site(site.id)
+          if options[:wait]
+            loop do
+              status = connection.scan_status(scan.id)
+              if status == Nexpose::Scan::Status::FINISHED
+                if options[:log]
+                  path = ::File.expand_path("#{options[:log]}-#{connection.host}")
+                  connection.download("/data/scan/log?scan-id=#{scan.id}", path)
+                  puts "Saved log for scan ID #{scan.id} of #{site_name} in #{path}" if options[:verbose]
+                end
+                break
+              end
+              fail "Scan did not finish: #{status}" if [Nexpose::Scan::Status::ABORTED, Nexpose::Scan::Status::ERROR, Nexpose::Scan::Status::PAUSED, Nexpose::Scan::Status::STOPPED].include?(status)
+            end
           end
         end
       end

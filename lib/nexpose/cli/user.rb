@@ -3,14 +3,17 @@
 require 'thor'
 
 module Nexpose
-  class UserCLI < Thor
+  module CLI
+    class User < Thor
 
-    desc 'list', 'List users'
-    def list
-      $connections.map do |connection|
-        puts "#{connection.host}:"
-        connection.users .map do |user_summary|
-          puts "\t#{user_summary.name}"
+      desc 'list', 'List users'
+
+      def list
+        $connections.map do |connection|
+          puts "#{connection.host}:"
+          connection.users.map do |user_summary|
+            puts "\t#{user_summary.name}"
+          end
         end
       end
     end

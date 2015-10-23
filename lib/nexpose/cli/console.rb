@@ -3,13 +3,16 @@
 require 'thor'
 
 module Nexpose
-  class ConsoleCLI < Thor
+  module CLI
+    class Console < Thor
 
-    desc 'command', 'Run console commands'
-    def command(command)
-      $connections.map do |connection|
-        puts "#{connection.host}:"
-        puts connection.console_command(command)
+      desc 'command', 'Run console commands'
+
+      def command(command)
+        $connections.map do |connection|
+          puts "#{connection.host}:"
+          puts connection.console_command(command)
+        end
       end
     end
   end

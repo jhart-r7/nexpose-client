@@ -3,10 +3,10 @@
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), "..", "lib")))
 
 require 'bundler/setup'
-require 'nexpose/cli/cli'
+require 'nexpose/cli/client'
 
 begin
-  Nexpose::CLI.start(ARGV)
+  Nexpose::CLI::Client.start(ARGV)
 rescue Interrupt
   puts 'Quitting...'
 end

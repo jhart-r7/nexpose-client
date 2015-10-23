@@ -3,14 +3,16 @@
 require 'thor'
 
 module Nexpose
-  class EngineCLI < Thor
+  module CLI
+    class Engine < Thor
 
-    desc 'list', 'List engines'
-    def list
-      $connections.map do |connection|
-        puts "#{connection.host}:"
-        connection.engines  .map do |engine_summary|
-          puts "\t#{engine_summary.name}"
+      desc 'list', 'List engines'
+      def list
+        $connections.map do |connection|
+          puts "#{connection.host}:"
+          connection.engines  .map do |engine_summary|
+            puts "\t#{engine_summary.name}"
+          end
         end
       end
     end

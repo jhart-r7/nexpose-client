@@ -4,6 +4,7 @@ require 'thor'
 require 'nexpose'
 require_relative 'config_file'
 require_relative 'configure'
+require_relative 'engine'
 require_relative 'site'
 
 module Nexpose
@@ -26,6 +27,9 @@ module Nexpose
 
     desc 'configure CONFIGURE_COMMANDS ...ARGS', 'Configures nexpose-client'
     subcommand 'configure', ConfigureCLI
+
+    desc 'engine ENGINE_COMMANDS ...ARGS', 'Configure engines'
+    subcommand 'engine', EngineCLI
 
     desc 'site SITE_COMMANDS ...ARGS', 'Interact with sites'
     subcommand 'site', SiteCLI

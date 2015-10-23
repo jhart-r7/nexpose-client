@@ -14,7 +14,7 @@ module Nexpose
     end
 
     def load_file
-      save({consoles: []}.to_yaml) unless ::File.exists?(@path)
+      save({'consoles' => []}.to_yaml) unless ::File.exists?(@path)
       YAML.load_file(@path)
     end
 

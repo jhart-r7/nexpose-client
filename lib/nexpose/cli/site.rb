@@ -22,7 +22,7 @@ module Nexpose
           site.include_asset(asset)
         end
         site.save(connection)
-        puts "Created #{name} on #{connection.host}"
+        puts "Created #{name} on #{connection.host}" if options[:verbose]
       end
     end
 
@@ -32,14 +32,14 @@ module Nexpose
       $connections.map do |connection|
         if options[:all]
           connection.sites.map do |site_summary|
-            puts "Deleting #{site_summary.name}/#{site_summary.id} on #{connection.host}"
+            puts "Deleting #{site_summary.name}/#{site_summary.id} on #{connection.host}" if options[:verbose]
             connection.delete_site(site_summary.id)
           end
         else
           site_names.each do |site_name|
             site = connection.sites.find { |s| s.name == site_name }
             fail "No site named #{site_name} on #{connection}" unless site
-            puts "Deleting #{site_name}/#{site.id} on #{connection.host}"
+            puts "Deleting #{site_name}/#{site.id} on #{connection.host}" if options[:verbose]
             connection.delete_site(site.id)
           end
         end
@@ -63,7 +63,7 @@ module Nexpose
       $connections.map do |connection|
         site = connection.sites.find { |s| s.name == site_name }
         fail "No site named #{site_name} on #{connection}" unless site
-        puts "Scanning #{site_name}/#{site.id} on #{connection.host}"
+        puts "Scanning #{site_name}/#{site.id} on #{connection.host}" if options[:verbose]
         scan = connection.scan_site(site.id)
         if options[:wait]
           loop do

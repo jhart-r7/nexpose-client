@@ -5,7 +5,6 @@ require 'uri'
 module Nexpose
   module CLI
     class Configure < Thor
-
       CONFIG_FILENAME = '.nexpose-client'
 
       desc 'list', 'List configured console(s)'
@@ -16,7 +15,7 @@ module Nexpose
 
       desc 'add <CONSOLE_URI> [ALIAS]', 'Add Nexpose consoles'
 
-      def add(uri, console_alias = nil)
+      def add(uri, _console_alias = nil)
         uri = URI.parse(uri)
         $config.data['consoles'] ||= []
         $config.data['consoles'] << uri.to_s

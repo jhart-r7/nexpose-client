@@ -6,7 +6,6 @@ require 'thor'
 module Nexpose
   module CLI
     class Site < Thor
-
       desc 'add', 'Add a site'
       option :name, aliases: '-v', desc: 'Name of the site', default: 'Randomly generated'
       option :template, aliases: '-t', desc: 'Scan template to use', default: 'full-audit-without-web-spider'
@@ -58,9 +57,9 @@ module Nexpose
 
       desc 'scan', 'Scan sites/assets'
       option :wait, aliases: '-w', type: :boolean, desc: 'Wait until scan completes'
-      option :log, aliases: '-l', type: :string, banner: '<log_path>', required: true, desc: "Store scan logs here"
+      option :log, aliases: '-l', type: :string, banner: '<log_path>', required: true, desc: 'Store scan logs here'
 
-      def scan(site_name, *assets)
+      def scan(site_name, *_assets)
         $connections.map do |connection|
           site = connection.sites.find { |s| s.name == site_name }
           fail "No site named #{site_name} on #{connection}" unless site

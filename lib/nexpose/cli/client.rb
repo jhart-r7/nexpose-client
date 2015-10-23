@@ -14,8 +14,8 @@ module Nexpose
     class Client < Thor
       class_option :verbose, aliases: :v, type: :boolean, desc: 'Be verbose', default: 'true'
       class_option 'configuration-path', aliases: :c, type: :string,
-                   default: ::File.join(::File.expand_path('~'), Nexpose::CLI::Configure::CONFIG_FILENAME),
-                   desc: 'Path to nexpose-client configuration file', banner: 'FILE'
+                                         default: ::File.join(::File.expand_path('~'), Nexpose::CLI::Configure::CONFIG_FILENAME),
+                                         desc: 'Path to nexpose-client configuration file', banner: 'FILE'
 
       def initialize(*)
         $config = Nexpose::CLI::ConfigFile.new

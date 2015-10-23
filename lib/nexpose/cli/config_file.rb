@@ -5,7 +5,6 @@ require 'yaml'
 module Nexpose
   module CLI
     class ConfigFile
-
       attr_reader :path
       attr_reader :data
       FILENAME = '.nexpose-client'
@@ -16,7 +15,7 @@ module Nexpose
       end
 
       def load_file
-        save({'consoles' => []}.to_yaml) unless ::File.exists?(@path)
+        save({ 'consoles' => [] }.to_yaml) unless ::File.exist?(@path)
         YAML.load_file(@path)
       end
 

@@ -5,7 +5,6 @@ require 'thor'
 module Nexpose
   module CLI
     class User < Thor
-
       desc 'list', 'List users'
 
       def list

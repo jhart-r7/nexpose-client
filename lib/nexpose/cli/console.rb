@@ -5,7 +5,6 @@ require 'thor'
 module Nexpose
   module CLI
     class Console < Thor
-
       desc 'command', 'Run console commands'
 
       def command(command)

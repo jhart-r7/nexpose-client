@@ -7,6 +7,7 @@ require_relative 'configure'
 require_relative 'console'
 require_relative 'engine'
 require_relative 'site'
+require_relative 'user'
 
 module Nexpose
   class CLI < Thor
@@ -29,13 +30,16 @@ module Nexpose
     desc 'configure CONFIGURE_COMMANDS ...ARGS', 'Configures nexpose-client'
     subcommand 'configure', ConfigureCLI
 
-    desc 'console CONSOLE_COMMANDS ...ARGS', 'Configure consoles'
+    desc 'console CONSOLE_COMMANDS ...ARGS', 'Work with consoles'
     subcommand 'console', ConsoleCLI
 
-    desc 'engine ENGINE_COMMANDS ...ARGS', 'Configure engines'
+    desc 'engine ENGINE_COMMANDS ...ARGS', 'Work with engines'
     subcommand 'engine', EngineCLI
 
-    desc 'site SITE_COMMANDS ...ARGS', 'Interact with sites'
+    desc 'site SITE_COMMANDS ...ARGS', 'Work with sites'
     subcommand 'site', SiteCLI
+
+    desc 'user USER_COMMANDS ...ARGS', 'Work with users'
+    subcommand 'user', UserCLI
   end
 end

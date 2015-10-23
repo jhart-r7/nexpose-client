@@ -15,7 +15,7 @@ module Nexpose
         assets = $stdin.readlines.map(&:strip) if assets.empty?
         name = options[:name] || SecureRandom.hex
         $connections.map do |connection|
-          site = Site.new(name, options[:template])
+          site = Nexpose::Site.new(name, options[:template])
           assets.map do |asset|
             site.include_asset(asset)
           end

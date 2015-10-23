@@ -58,6 +58,7 @@ module Nexpose
 
     desc 'scan', 'Scan sites/assets'
     option :wait, aliases: :w, type: :boolean
+    option :log, aliases: :l, type: :string, banner: '<log_path>', required: true
     def scan(site_name, *assets)
       $connections.map do |connection|
         site = connection.sites.find { |s| s.name == site_name }
@@ -67,7 +68,14 @@ module Nexpose
         if options[:wait]
           loop do
             status = connection.scan_status(scan.id)
-            break if status == Nexpose::Scan::Status::FINISHED
+            if status == Nexpose::Scan::Status::FINISHED
+              if options[:log]
+                path = ::File.expand_path("#{options[:log]}-#{connection.host}")
+                connection.download("/data/scan/log?scan-id=#{scan.id}", path)
+                puts "Saved log for scan ID #{scan.id} of #{site_name} in #{path}" if options[:verbose]
+              end
+              break
+            end
             fail "Scan did not finish: #{status}" if [ Nexpose::Scan::Status::ABORTED, Nexpose::Scan::Status::ERROR, Nexpose::Scan::Status::PAUSED, Nexpose::Scan::Status::STOPPED ].include?(status)
           end
         end

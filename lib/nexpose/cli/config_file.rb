@@ -13,19 +13,17 @@ module Nexpose
       @data = load_file
     end
 
-    def create_file
-      ::File.open(@path, 'w') do |f|
-        f.puts('consoles:')
-      end
-    end
-
     def load_file
-      create_file unless ::File.exists?(@path)
+      save({consoles: []}.to_yaml) unless ::File.exists?(@path)
       YAML.load_file(@path)
     end
 
-    def save(data = @data)
-      ::File.open(@path, 'w') { |f| f.puts data.to_yaml }
+    def save(data = @data.to_yaml)
+      ::File.open(@path, 'w') { |f| f.puts data }
+    end
+
+    def consoles
+      @data['consoles']
     end
   end
 end

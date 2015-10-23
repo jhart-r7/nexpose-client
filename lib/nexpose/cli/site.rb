@@ -6,9 +6,12 @@ module Nexpose
   class SiteCLI < Thor
     desc 'list', 'List sites'
     def list
-      @connection = Nexpose::Connection.new('localhost', 'nxadmin', 'nxadmin')
-      @connection.login
-      puts @connection.list_sites
+      $connections.map do |connection|
+        puts "#{connection.host}:"
+        connection.list_sites.map do |site_summary|
+          puts "\t#{site_summary.name}"
+        end
+      end
     end
   end
 end

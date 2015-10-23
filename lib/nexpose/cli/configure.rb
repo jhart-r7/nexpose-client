@@ -7,8 +7,7 @@ module Nexpose
 
     desc 'list', 'List configured console(s)'
     def list
-
-      puts $config.data['consoles']
+      puts $config.consoles
     end
 
     desc 'add <CONSOLE_URI> [ALIAS]', 'Add Nexpose consoles'

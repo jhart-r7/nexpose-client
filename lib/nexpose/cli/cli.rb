@@ -15,6 +15,13 @@ module Nexpose
     def initialize(*)
       $config = Nexpose::ConfigFile.new
       super
+      $connections = []
+      $config.consoles.each do |console|
+        console_uri = URI.parse(console)
+        connection = Nexpose::Connection.new(console_uri.host, console_uri.user, console_uri.password, console_uri.port)
+        connection.login
+        $connections << connection
+      end if $config.consoles
     end
 
     desc 'configure CONFIGURE_COMMANDS ...ARGS', 'Configures nexpose-client'

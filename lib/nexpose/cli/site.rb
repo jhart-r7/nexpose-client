@@ -57,8 +57,8 @@ module Nexpose
       end
 
       desc 'scan', 'Scan sites/assets'
-      option :wait, aliases: '-w', type: :boolean
-      option :log, aliases: '-l', type: :string, banner: '<log_path>', required: true
+      option :wait, aliases: '-w', type: :boolean, desc: 'Wait until scan completes'
+      option :log, aliases: '-l', type: :string, banner: '<log_path>', required: true, desc: "Store scan logs here"
 
       def scan(site_name, *assets)
         $connections.map do |connection|

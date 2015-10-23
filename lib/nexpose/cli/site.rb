@@ -13,7 +13,7 @@ module Nexpose
       def add(*assets)
         assets = $stdin.readlines.map(&:strip) if assets.empty?
         name = options[:name] || SecureRandom.hex
-        $connections.map do |connection|
+        options[:connections].map do |connection|
           site = Nexpose::Site.new(name, options[:template])
           assets.map do |asset|
             site.include_asset(asset)
@@ -27,7 +27,7 @@ module Nexpose
       option :all, aliases: '-a', type: :boolean, desc: 'Delete all sites', default: false
 
       def delete(*site_names)
-        $connections.map do |connection|
+        options[:connections].map do |connection|
           if options[:all]
             connection.sites.map do |site_summary|
               puts "Deleting #{site_summary.name}/#{site_summary.id} on #{connection.host}" if options[:verbose]
@@ -47,7 +47,7 @@ module Nexpose
       desc 'list', 'List sites'
 
       def list
-        $connections.map do |connection|
+        options[:connections].map do |connection|
           puts "#{connection.host}:"
           connection.sites.map do |site_summary|
             puts "\t#{site_summary.name}"
@@ -60,7 +60,7 @@ module Nexpose
       option :log, aliases: '-l', type: :string, banner: '<log_path>', required: true, desc: 'Store scan logs here'
 
       def scan(site_name, *_assets)
-        $connections.map do |connection|
+        options[:connections].map do |connection|
           site = connection.sites.find { |s| s.name == site_name }
           fail "No site named #{site_name} on #{connection}" unless site
           puts "Scanning #{site_name}/#{site.id} on #{connection.host}" if options[:verbose]

@@ -18,15 +18,16 @@ module Nexpose
                                          desc: 'Path to nexpose-client configuration file', banner: 'FILE'
 
       def initialize(*)
-        $config = Nexpose::CLI::ConfigFile.new
+        @configuration = Nexpose::CLI::ConfigFile.new
         super
-        $connections = []
-        $config.consoles.each do |console|
+        options[:connections] = []
+        options[:configuration] = @configuration
+        options[:configuration].consoles.each do |console|
           console_uri = URI.parse(console)
           connection = Nexpose::Connection.new(console_uri.host, console_uri.user, console_uri.password, console_uri.port)
           connection.login
-          $connections << connection
-        end if $config.consoles
+          options[:connections] << connection
+        end if options[:configuration].consoles
       end
 
       desc 'configure CONFIGURE_COMMANDS ...ARGS', 'Configures nexpose-client'
@@ -43,6 +44,12 @@ module Nexpose
 
       desc 'user USER_COMMANDS ...ARGS', 'Work with users'
       subcommand 'user', User
+
+      private
+
+      def options
+        @configuration.data.merge!(super)
+      end
     end
   end
 end

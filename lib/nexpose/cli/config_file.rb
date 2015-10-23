@@ -20,6 +20,7 @@ module Nexpose
       end
 
       def save(data = @data.to_yaml)
+        @data = data
         ::File.open(@path, 'w') { |f| f.puts data }
       end
 

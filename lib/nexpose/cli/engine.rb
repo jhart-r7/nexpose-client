@@ -7,7 +7,7 @@ module Nexpose
     class Engine < Thor
       desc 'list', 'List engines'
       def list
-        $connections.map do |connection|
+        options[:connections].map do |connection|
           puts "#{connection.host}:"
           connection.engines .map do |engine_summary|
             puts "\t#{engine_summary.name}"

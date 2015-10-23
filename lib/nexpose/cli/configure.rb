@@ -10,16 +10,16 @@ module Nexpose
       desc 'list', 'List configured console(s)'
 
       def list
-        puts $config.consoles
+        puts options[:connections].map(&:host).join("\n")
       end
 
       desc 'add <CONSOLE_URI> [ALIAS]', 'Add Nexpose consoles'
 
       def add(uri, _console_alias = nil)
         uri = URI.parse(uri)
-        $config.data['consoles'] ||= []
-        $config.data['consoles'] << uri.to_s
-        $config.save
+        options[:configuration].data['consoles'] ||= []
+        options[:configuration].data['consoles'] << uri.to_s
+        options[:configuration].save
       end
     end
   end

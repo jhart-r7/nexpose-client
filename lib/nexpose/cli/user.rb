@@ -8,7 +8,7 @@ module Nexpose
       desc 'list', 'List users'
 
       def list
-        $connections.map do |connection|
+        options[:connections].map do |connection|
           puts "#{connection.host}:"
           connection.users.map do |user_summary|
             puts "\t#{user_summary.name}"

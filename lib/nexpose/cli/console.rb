@@ -8,7 +8,7 @@ module Nexpose
       desc 'command', 'Run console commands'
 
       def command(command)
-        $connections.map do |connection|
+        options[:connections].map do |connection|
           puts "#{connection.host}:"
           puts connection.console_command(command)
         end

@@ -4,17 +4,14 @@ require 'uri'
 
 module Nexpose
   module CLI
+    # Provides support for interacting with Nexpose Scan Engines
     class Configure < Thor
-      CONFIG_FILENAME = '.nexpose-client'
-
       desc 'list', 'List configured console(s)'
-
       def list
         puts options[:connections].map(&:host).join("\n")
       end
 
       desc 'add <CONSOLE_URI> [ALIAS]', 'Add Nexpose consoles'
-
       def add(uri, _console_alias = nil)
         uri = URI.parse(uri)
         options[:configuration].data['consoles'] ||= []

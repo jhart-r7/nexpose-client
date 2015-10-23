@@ -4,9 +4,9 @@ require 'thor'
 
 module Nexpose
   module CLI
+    # Provides support for interacting with users on Nexpose Scan Consoles
     class User < Thor
       desc 'list', 'List users'
-
       def list
         options[:connections].map do |connection|
           puts "#{connection.host}:"

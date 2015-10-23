@@ -8,7 +8,7 @@ module Nexpose
     # Provides support for interacting with sites on Nexpose Scan Consoles
     class Site < Thor
       desc 'add', 'Add a site'
-      option :name, aliases: '-v', desc: 'Name of the site', default: 'Randomly generated'
+      option :name, aliases: '-n', desc: 'Name of the site (defaults to random)'
       option :template, aliases: '-t', desc: 'Scan template to use', default: 'full-audit-without-web-spider'
       def add(*assets)
         assets = $stdin.readlines.map(&:strip) if assets.empty?
